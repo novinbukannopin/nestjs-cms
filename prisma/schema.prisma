@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  username     String
+  display_name String
+  email        String
+  password     String
+  role         Role      @relation(fields: [roleId], references: [id])
+  roleId       Int
+  division     Division  @relation(fields: [divisionId], references: [id])
+  divisionId   Int
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  Content      Content[]
+}
+
+enum Roles {
+  ADMIN
+  USER
+}
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  name Roles
+  User User[]
+}
+
+model Content {
+  id         Int        @id @default(autoincrement())
+  title      String
+  body       String
+  source     String?
+  tags       Tags[]
+  brand      Brand[]
+  category   Categories @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  author     User       @relation(fields: [authorId], references: [id])
+  authorId   Int
+}
+
+model Division {
+  id   Int    @id @default(autoincrement())
+  name String
+  User User[]
+}
+
+model Tags {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Content   Content? @relation(fields: [contentId], references: [id])
+  contentId Int?
+}
+
+enum Category {
+  ARTICLE
+  NEWS
+}
+
+model Categories {
+  id        Int       @id @default(autoincrement())
+  name      Category
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Content   Content[]
+}
+
+model Brand {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  Content     Content[]
+}
