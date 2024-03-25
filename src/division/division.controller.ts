@@ -1,11 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Ip } from "@nestjs/common";
+import { Controller, Get, Post, Body, Patch, Param, Delete, Ip, UseGuards } from "@nestjs/common";
 import { DivisionService } from "./division.service";
 import { CreateDivisionDto } from "./dto/create-division.dto";
 import { UpdateDivisionDto } from "./dto/update-division.dto";
 import { LoggerService } from "../utils/logger/logger.service";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { JwtAuthGuard } from "../auth/guard/jwt.guard";
 
 @ApiTags("Division")
+@ApiBearerAuth()
 @Controller("division")
 export class DivisionController {
   constructor(private readonly divisionService: DivisionService) {
@@ -18,6 +20,7 @@ export class DivisionController {
     return this.divisionService.create(createDivisionDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   getAll(@Ip() ip: string) {
     this.logger.log(`[Get All] Request from IP: ${ip}\t`, DivisionController.name);

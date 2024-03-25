@@ -8,7 +8,7 @@ import { PrismaService } from "../utils/prisma/prisma.service";
 @Controller("auth")
 export class AuthController {
 
-  constructor(private authService: AuthService, private prismaService: PrismaService) {
+  constructor(private authService: AuthService) {
   }
 
   @Post("login")
